@@ -1,3 +1,0 @@
-[submodule "luci-app-bypass"]
-	path = luci-app-bypass
-	url = https://github.com/garypang13/luci-app-bypass
