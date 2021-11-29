@@ -24,6 +24,10 @@ CMAKE_SOURCE_SUBDIR := llvm
 include $(INCLUDE_DIR)/host-build.mk
 include $(INCLUDE_DIR)/cmake.mk
 
+LLVM_BPF_PREFIX = llvm-bpf-$(PKG_VERSION).$(HOST_OS)-$(HOST_ARCH)
+
+CMAKE_HOST_INSTALL_PREFIX = $(STAGING_DIR_HOST)/$(LLVM_BPF_PREFIX)
+
 CMAKE_HOST_OPTIONS += \
 	-DLLVM_ENABLE_BINDINGS=OFF \
 	-DLLVM_INCLUDE_DOCS=OFF \
@@ -31,6 +35,22 @@ CMAKE_HOST_OPTIONS += \
 	-DLLVM_INCLUDE_TESTS=OFF \
 	-DLLVM_ENABLE_PROJECTS="clang;lld" \
 	-DLLVM_TARGETS_TO_BUILD=BPF \
-	-DCLANG_BUILD_EXAMPLES=OFF
+	-DCLANG_BUILD_EXAMPLES=OFF \
+	-DLLVM_INSTALL_TOOLCHAIN_ONLY=ON \
+	-DLLVM_LINK_LLVM_DYLIB=ON \
+	-DLLVM_TOOLCHAIN_TOOLS="llvm-objcopy;llvm-objdump;llvm-readelf;llvm-strip;llvm-ar;llvm-as;llvm-dis;llvm-link;llvm-nm;llvm-ranlib;llc;opt" \
+	-DCMAKE_SKIP_RPATH=OFF
+
+define Host/Install
+	rm -rf $(STAGING_DIR_HOST)/llvm-bpf*
+	$(Host/Install/Default)
+	ln -s $(LLVM_BPF_PREFIX) $(STAGING_DIR_HOST)/llvm-bpf
+	STRIP_KMOD= PATCHELF= STRIP=strip $(SCRIPT_DIR)/rstrip.sh $(STAGING_DIR_HOST)/llvm-bpf
+	echo "$(PKG_VERSION)" > $(CMAKE_HOST_INSTALL_PREFIX)/.llvm-version
+endef
+
+define Host/Uninstall
+	rm -rf $(STAGING_DIR_HOST)/llvm-bpf*
+endef
 
 $(eval $(call HostBuild))

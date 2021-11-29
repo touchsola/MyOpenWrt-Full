@@ -218,6 +218,7 @@ define Device/buffalo_wzr-900dhp
 	buffalo-enc WZR-900DHP2 $$(BUFFALO_TAG_VERSION) | \
 	buffalo-tag-dhp WZR-900DHP2 JP jp | buffalo-enc-tag | \
 	buffalo-dhp-image
+  BROKEN := y
 endef
 TARGET_DEVICES += buffalo_wzr-900dhp
 
@@ -317,7 +318,7 @@ TARGET_DEVICES += luxul_xwr-3150
 define Device/meraki_mr32
   DEVICE_VENDOR := Meraki
   DEVICE_MODEL := MR32
-  DEVICE_PACKAGES := $(B43) kmod-i2c-bcm-iproc kmod-i2c-gpio kmod-eeprom-at24 \
+  DEVICE_PACKAGES := $(B43) kmod-i2c-bcm-iproc kmod-eeprom-at24 \
 	kmod-leds-pwm kmod-hwmon-ina2xx kmod-bluetooth
   DEVICE_DTS := bcm53016-meraki-mr32
 # Meraki FW r23 tries to resize the part.safe partition before it will
